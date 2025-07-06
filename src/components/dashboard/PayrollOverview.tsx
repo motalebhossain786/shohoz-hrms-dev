@@ -32,39 +32,39 @@ const PayrollOverview = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Last Month vs Current */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="p-4 rounded-lg bg-accent/50">
-            <h4 className="font-medium text-sm mb-2">Last Month</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Headcount</span>
+            <h4 className="font-medium text-sm mb-3">Last Month</h4>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Headcount</span>
                 <span className="text-sm font-medium text-right">{payrollData.lastMonth.headcount}</span>
               </div>
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Total Disbursed</span>
-                <span className="text-sm font-bold text-success text-right break-all">{payrollData.lastMonth.totalDisbursed}</span>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Total Disbursed</span>
+                <span className="text-xs font-bold text-success text-right whitespace-nowrap">{payrollData.lastMonth.totalDisbursed}</span>
               </div>
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Avg Salary</span>
-                <span className="text-sm font-medium text-right break-all">{payrollData.lastMonth.avgSalary}</span>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Avg Salary</span>
+                <span className="text-xs font-medium text-right whitespace-nowrap">{payrollData.lastMonth.avgSalary}</span>
               </div>
             </div>
           </div>
 
           <div className="p-4 rounded-lg bg-primary/10">
-            <h4 className="font-medium text-sm mb-2">Current Month</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Headcount</span>
+            <h4 className="font-medium text-sm mb-3">Current Month</h4>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Headcount</span>
                 <span className="text-sm font-medium text-right">{payrollData.currentMonth.headcount}</span>
               </div>
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Estimated Total</span>
-                <span className="text-sm font-bold text-primary text-right break-all">{payrollData.currentMonth.estimatedTotal}</span>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Estimated Total</span>
+                <span className="text-xs font-bold text-primary text-right whitespace-nowrap">{payrollData.currentMonth.estimatedTotal}</span>
               </div>
-              <div className="flex justify-between items-start gap-2">
-                <span className="text-xs text-muted-foreground flex-shrink-0">Avg Salary</span>
-                <span className="text-sm font-medium text-right break-all">{payrollData.currentMonth.avgSalary}</span>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-xs text-muted-foreground">Avg Salary</span>
+                <span className="text-xs font-medium text-right whitespace-nowrap">{payrollData.currentMonth.avgSalary}</span>
               </div>
             </div>
           </div>
