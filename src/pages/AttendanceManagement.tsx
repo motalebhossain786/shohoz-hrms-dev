@@ -18,6 +18,12 @@ const AttendanceManagement = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [selectedCompany, setSelectedCompany] = useState('all');
   const [editingRecord, setEditingRecord] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [editingOutOfOffice, setEditingOutOfOffice] = useState(null);
+  const [creatingRoster, setCreatingRoster] = useState(false);
+  const [editingRoster, setEditingRoster] = useState(null);
   const [attendanceRecords, setAttendanceRecords] = useState([
     { 
       id: 1, 
@@ -133,12 +139,28 @@ const AttendanceManagement = () => {
   ]);
 
   const departments = ['Engineering', 'Marketing', 'HR', 'Finance', 'Sales'];
-  const companies = ['Shohoz Ltd', 'Shohoz Tech', 'Shohoz Digital'];
+  const companies = ['Shohoz', 'SSV JV', 'Viajar'];
 
   const filteredRecords = attendanceRecords.filter(record => {
     const departmentMatch = selectedDepartment === 'all' || record.department === selectedDepartment;
     const companyMatch = selectedCompany === 'all' || record.company === selectedCompany;
-    return departmentMatch && companyMatch;
+    const searchMatch = searchQuery === '' || 
+      record.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      record.employeeId.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let dateMatch = true;
+    if (dateFrom && dateTo) {
+      const recordDate = new Date(record.date);
+      const fromDate = new Date(dateFrom);
+      const toDate = new Date(dateTo);
+      dateMatch = recordDate >= fromDate && recordDate <= toDate;
+    } else if (dateFrom) {
+      dateMatch = new Date(record.date) >= new Date(dateFrom);
+    } else if (dateTo) {
+      dateMatch = new Date(record.date) <= new Date(dateTo);
+    }
+    
+    return departmentMatch && companyMatch && searchMatch && dateMatch;
   });
 
   const getStatusIcon = (status) => {
@@ -320,6 +342,304 @@ const AttendanceManagement = () => {
     );
   };
 
+  const OutOfOfficeForm = ({ record = null, onSave, onCancel }) => {
+    const [formData, setFormData] = useState(record || {
+      employeeId: '',
+      name: '',
+      department: '',
+      purpose: '',
+      location: '',
+      startTime: '',
+      endTime: '',
+      date: '',
+      notes: ''
+    });
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave(formData);
+    };
+
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="employeeId">Employee ID</Label>
+            <Input
+              id="employeeId"
+              value={formData.employeeId}
+              onChange={(e) => setFormData({...formData, employeeId: e.target.value})}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="name">Employee Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              required
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="department">Department</Label>
+            <Select value={formData.department} onValueChange={(value) => setFormData({...formData, department: value})}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map(dept => (
+                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="purpose">Purpose</Label>
+            <Input
+              id="purpose"
+              value={formData.purpose}
+              onChange={(e) => setFormData({...formData, purpose: e.target.value})}
+              placeholder="Client Meeting, Site Visit, etc."
+              required
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <Label htmlFor="location">Location</Label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) => setFormData({...formData, location: e.target.value})}
+              placeholder="Address or site name"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="startTime">Start Time</Label>
+            <Input
+              id="startTime"
+              type="time"
+              value={formData.startTime}
+              onChange={(e) => setFormData({...formData, startTime: e.target.value})}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="endTime">End Time</Label>
+            <Input
+              id="endTime"
+              type="time"
+              value={formData.endTime}
+              onChange={(e) => setFormData({...formData, endTime: e.target.value})}
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="date">Date</Label>
+          <Input
+            id="date"
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({...formData, date: e.target.value})}
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea
+            id="notes"
+            value={formData.notes}
+            onChange={(e) => setFormData({...formData, notes: e.target.value})}
+            placeholder="Additional notes or instructions..."
+          />
+        </div>
+
+        <div className="flex justify-end space-x-2">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" className="hrms-button-primary">
+            {record ? 'Update' : 'Create'} Assignment
+          </Button>
+        </div>
+      </form>
+    );
+  };
+
+  const RosterForm = ({ roster = null, onSave, onCancel }) => {
+    const [formData, setFormData] = useState(roster || {
+      department: '',
+      dutyType: '',
+      dateFrom: '',
+      dateTo: '',
+      selectedEmployees: [],
+      notes: ''
+    });
+
+    const [availableEmployees] = useState([
+      { id: 'EMP001', name: 'John Doe', department: 'Engineering' },
+      { id: 'EMP002', name: 'Sarah Wilson', department: 'Marketing' },
+      { id: 'EMP003', name: 'Mike Johnson', department: 'HR' },
+      { id: 'EMP004', name: 'Emily Chen', department: 'Finance' },
+      { id: 'EMP005', name: 'David Brown', department: 'Engineering' },
+      { id: 'EMP006', name: 'Maria Garcia', department: 'Sales' }
+    ]);
+
+    const filteredEmployees = availableEmployees.filter(emp => 
+      formData.department === '' || emp.department === formData.department
+    );
+
+    const handleEmployeeToggle = (employeeId) => {
+      setFormData(prev => ({
+        ...prev,
+        selectedEmployees: prev.selectedEmployees.includes(employeeId)
+          ? prev.selectedEmployees.filter(id => id !== employeeId)
+          : [...prev.selectedEmployees, employeeId]
+      }));
+    };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave(formData);
+    };
+
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="department">Department</Label>
+            <Select value={formData.department} onValueChange={(value) => setFormData({...formData, department: value})}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select department" />
+              </SelectTrigger>
+              <SelectContent>
+                {departments.map(dept => (
+                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="dutyType">Duty Type</Label>
+            <Input
+              id="dutyType"
+              value={formData.dutyType}
+              onChange={(e) => setFormData({...formData, dutyType: e.target.value})}
+              placeholder="Regular Shift, Field Work, etc."
+              required
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="dateFrom">From Date</Label>
+            <Input
+              id="dateFrom"
+              type="date"
+              value={formData.dateFrom}
+              onChange={(e) => setFormData({...formData, dateFrom: e.target.value})}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="dateTo">To Date</Label>
+            <Input
+              id="dateTo"
+              type="date"
+              value={formData.dateTo}
+              onChange={(e) => setFormData({...formData, dateTo: e.target.value})}
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label>Select Employees</Label>
+          <div className="max-h-48 overflow-y-auto border rounded-lg p-3 space-y-2">
+            {filteredEmployees.map(employee => (
+              <div key={employee.id} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id={employee.id}
+                  checked={formData.selectedEmployees.includes(employee.id)}
+                  onChange={() => handleEmployeeToggle(employee.id)}
+                  className="rounded"
+                />
+                <label htmlFor={employee.id} className="text-sm flex-1">
+                  {employee.name} ({employee.id}) - {employee.department}
+                </label>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            {formData.selectedEmployees.length} employee(s) selected
+          </p>
+        </div>
+
+        <div>
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea
+            id="notes"
+            value={formData.notes}
+            onChange={(e) => setFormData({...formData, notes: e.target.value})}
+            placeholder="Additional notes or instructions..."
+          />
+        </div>
+
+        <div className="flex justify-end space-x-2">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" className="hrms-button-primary">
+            {roster ? 'Update' : 'Create'} Roster
+          </Button>
+        </div>
+      </form>
+    );
+  };
+
+  const handleUpdateOutOfOffice = (updatedRecord) => {
+    setOutOfOfficeRecords(outOfOfficeRecords.map(record => 
+      record.id === updatedRecord.id ? { ...updatedRecord, status: 'Active' } : record
+    ));
+    setEditingOutOfOffice(null);
+    toast({
+      title: "Success",
+      description: "Out of Office assignment updated successfully",
+    });
+  };
+
+  const handleCreateRoster = (newRoster) => {
+    const roster = {
+      ...newRoster,
+      id: Date.now(),
+      status: 'Active'
+    };
+    setCreatingRoster(false);
+    toast({
+      title: "Success",
+      description: "New roster created successfully",
+    });
+  };
+
+  const handleUpdateRoster = (updatedRoster) => {
+    setEditingRoster(null);
+    toast({
+      title: "Success",
+      description: "Roster updated successfully",
+    });
+  };
+
   const calculateStats = () => {
     const present = filteredRecords.filter(r => r.status === 'Present').length;
     const absent = filteredRecords.filter(r => r.status === 'Absent').length;
@@ -381,12 +701,32 @@ const AttendanceManagement = () => {
               <Label className="text-sm font-medium">Filters:</Label>
             </div>
             <div className="flex items-center gap-2">
-              <Label htmlFor="date" className="text-sm">Date:</Label>
+              <Label htmlFor="search" className="text-sm">Search:</Label>
               <Input
-                id="date"
+                id="search"
+                placeholder="Employee name or ID..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-48"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="dateFrom" className="text-sm">From:</Label>
+              <Input
+                id="dateFrom"
                 type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="w-auto"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="dateTo" className="text-sm">To:</Label>
+              <Input
+                id="dateTo"
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
                 className="w-auto"
               />
             </div>
@@ -619,10 +959,27 @@ const AttendanceManagement = () => {
                       >
                         {record.status}
                       </Badge>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit Assignment
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline" onClick={() => setEditingOutOfOffice(record)}>
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit Assignment
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>Edit Out of Office Assignment</DialogTitle>
+                            <DialogDescription>
+                              Update assignment details for {record.name}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <OutOfOfficeForm 
+                            record={record}
+                            onSave={handleUpdateOutOfOffice}
+                            onCancel={() => setEditingOutOfOffice(null)}
+                          />
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 ))}
@@ -737,10 +1094,26 @@ const AttendanceManagement = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Weekly Roster</h3>
-                  <Button className="hrms-button-primary">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create New Roster
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="hrms-button-primary" onClick={() => setCreatingRoster(true)}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create New Roster
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-3xl">
+                      <DialogHeader>
+                        <DialogTitle>Create New Roster</DialogTitle>
+                        <DialogDescription>
+                          Create a new roster assignment for a department
+                        </DialogDescription>
+                      </DialogHeader>
+                      <RosterForm 
+                        onSave={handleCreateRoster}
+                        onCancel={() => setCreatingRoster(false)}
+                      />
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 
                 <Table>
@@ -775,9 +1148,26 @@ const AttendanceManagement = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="h-3 w-3" />
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline" onClick={() => setEditingRoster(roster)}>
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-3xl">
+                                <DialogHeader>
+                                  <DialogTitle>Edit Roster</DialogTitle>
+                                  <DialogDescription>
+                                    Update roster assignment for {roster.dept} department
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <RosterForm 
+                                  roster={roster}
+                                  onSave={handleUpdateRoster}
+                                  onCancel={() => setEditingRoster(null)}
+                                />
+                              </DialogContent>
+                            </Dialog>
                             <Button size="sm" variant="outline">
                               <Download className="h-3 w-3" />
                             </Button>
