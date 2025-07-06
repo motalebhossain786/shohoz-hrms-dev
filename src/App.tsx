@@ -15,6 +15,7 @@ import EmployeeProfile from "@/pages/EmployeeProfile";
 import EditEmployee from "@/pages/EditEmployee";
 import AttendanceManagement from "@/pages/AttendanceManagement";
 import ModulePlaceholder from "@/pages/ModulePlaceholder";
+import LeaveManagement from "@/pages/LeaveManagement";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
@@ -48,20 +49,7 @@ const App = () => (
               {/* Module Placeholders */}
               <Route path="organogram" element={<Organogram />} />
               
-              <Route path="leave" element={
-                <ModulePlaceholder 
-                  title="Leave Management" 
-                  description="Manage employee leave requests and balances"
-                  icon={Calendar}
-                  features={[
-                    "Leave application and approval workflow",
-                    "Leave balance tracking",
-                    "Leave calendar and scheduling",
-                    "Leave policy configuration",
-                    "Automated leave calculations"
-                  ]}
-                />
-              } />
+              <Route path="leave" element={<LeaveManagement />} />
               
               <Route path="payroll" element={
                 <ModulePlaceholder 
