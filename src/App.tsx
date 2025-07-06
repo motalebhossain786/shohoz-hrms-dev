@@ -16,6 +16,7 @@ import EditEmployee from "@/pages/EditEmployee";
 import AttendanceManagement from "@/pages/AttendanceManagement";
 import ModulePlaceholder from "@/pages/ModulePlaceholder";
 import LeaveManagement from "@/pages/LeaveManagement";
+import PayrollManagement from "@/pages/PayrollManagement";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
@@ -51,20 +52,7 @@ const App = () => (
               
               <Route path="leave" element={<LeaveManagement />} />
               
-              <Route path="payroll" element={
-                <ModulePlaceholder 
-                  title="Payroll Management" 
-                  description="Comprehensive payroll processing and management"
-                  icon={DollarSign}
-                  features={[
-                    "Salary calculation and processing",
-                    "Tax and deduction management",
-                    "Payslip generation and distribution",
-                    "Payroll reports and analytics",
-                    "Integration with accounting systems"
-                  ]}
-                />
-              } />
+              <Route path="payroll" element={<PayrollManagement />} />
               
               <Route path="performance" element={
                 <ModulePlaceholder 
