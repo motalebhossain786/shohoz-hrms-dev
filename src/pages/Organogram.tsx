@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,9 +8,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   GitBranch, Plus, Edit, Trash2, Users, Building, 
-  Search, Filter, Eye, UserPlus, Settings 
+  Search, Filter, Eye, UserPlus, Settings, Calendar 
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Tree from 'react-d3-tree';
@@ -46,6 +49,7 @@ interface TreeNode {
 
 const Organogram = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   // Dummy organizational data
   const [employees] = useState<Employee[]>([
@@ -262,21 +266,50 @@ const Organogram = () => {
   };
 
   const customNodeElement = ({ nodeDatum }: any) => (
-    <g>
-      <circle r="30" fill="hsl(var(--primary))" stroke="hsl(var(--border))" strokeWidth="2" />
-      <text fill="white" strokeWidth="0" x="0" y="5" textAnchor="middle" fontSize="12" fontWeight="bold">
-        {nodeDatum.attributes.avatar}
-      </text>
-      <text fill="hsl(var(--foreground))" strokeWidth="0" x="0" y="50" textAnchor="middle" fontSize="14" fontWeight="600">
-        {nodeDatum.name}
-      </text>
-      <text fill="hsl(var(--muted-foreground))" strokeWidth="0" x="0" y="65" textAnchor="middle" fontSize="12">
-        {nodeDatum.attributes.position}
-      </text>
-      <text fill="hsl(var(--muted-foreground))" strokeWidth="0" x="0" y="80" textAnchor="middle" fontSize="10">
-        {nodeDatum.attributes.id}
-      </text>
-    </g>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <g 
+            onClick={() => navigate(`/employees/${nodeDatum.attributes.id}`)}
+            style={{ cursor: 'pointer' }}
+            className="hover:opacity-80 transition-opacity"
+          >
+            {/* Enhanced node with profile image */}
+            <foreignObject x="-50" y="-50" width="100" height="100">
+              <div className="flex flex-col items-center p-2 bg-background border border-border rounded-lg shadow-sm">
+                <Avatar className="h-12 w-12 mb-2">
+                  <AvatarImage src={nodeDatum.attributes.profileImage} alt={nodeDatum.name} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">
+                    {nodeDatum.attributes.avatar}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-center">
+                  <p className="text-xs font-semibold text-foreground truncate w-20">{nodeDatum.name}</p>
+                  <p className="text-xs text-muted-foreground truncate w-20">{nodeDatum.attributes.id}</p>
+                </div>
+              </div>
+            </foreignObject>
+            
+            {/* Additional info displayed below */}
+            <text fill="hsl(var(--foreground))" strokeWidth="0" x="0" y="70" textAnchor="middle" fontSize="11" fontWeight="600">
+              {nodeDatum.attributes.position}
+            </text>
+            <text fill="hsl(var(--muted-foreground))" strokeWidth="0" x="0" y="85" textAnchor="middle" fontSize="10">
+              <tspan>DoJ: {new Date(nodeDatum.attributes.dateOfJoining).toLocaleDateString()}</tspan>
+            </text>
+          </g>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="p-2">
+            <p className="font-semibold">{nodeDatum.name}</p>
+            <p className="text-sm">{nodeDatum.attributes.position}</p>
+            <p className="text-sm text-muted-foreground">{nodeDatum.attributes.department}</p>
+            <p className="text-sm text-muted-foreground">ID: {nodeDatum.attributes.id}</p>
+            <p className="text-sm text-muted-foreground">DoJ: {new Date(nodeDatum.attributes.dateOfJoining).toLocaleDateString()}</p>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 
   return (
@@ -363,12 +396,15 @@ const Organogram = () => {
                 <Tree
                   data={treeData}
                   orientation="vertical"
-                  translate={{ x: 400, y: 100 }}
-                  separation={{ siblings: 2, nonSiblings: 2 }}
+                  translate={{ x: 400, y: 150 }}
+                  separation={{ siblings: 2.5, nonSiblings: 2.5 }}
                   renderCustomNodeElement={customNodeElement}
-                  nodeSize={{ x: 200, y: 120 }}
-                  zoom={0.8}
+                  nodeSize={{ x: 220, y: 150 }}
+                  zoom={0.7}
                   enableLegacyTransitions
+                  zoomable
+                  draggable
+                  collapsible={false}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -383,41 +419,79 @@ const Organogram = () => {
         </Card>
       ) : (
         <div className="grid gap-6">
-          {departmentStats.map((dept) => (
-            <Card key={dept.department}>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{dept.department} Department</span>
-                  <Badge variant="secondary">{dept.total} Total</Badge>
-                </CardTitle>
-                <CardDescription>
-                  {dept.active} Active • {dept.total - dept.active} Inactive
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {dept.positions.map((pos) => (
-                      <div key={pos.position} className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
-                        <div>
-                          <p className="font-medium">{pos.position}</p>
-                          <p className="text-sm text-muted-foreground">{pos.count} employee(s)</p>
+          {departments.map((department) => {
+            const deptEmployees = filteredEmployees.filter(emp => emp.department === department);
+            if (deptEmployees.length === 0) return null;
+            
+            return (
+              <Card key={department}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>{department} Department</span>
+                    <Badge variant="secondary">{deptEmployees.length} Employees</Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    {deptEmployees.filter(emp => emp.status === 'Active').length} Active • {deptEmployees.filter(emp => emp.status !== 'Active').length} Inactive
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {deptEmployees.map((employee) => (
+                        <div key={employee.id} className="flex items-center justify-between p-4 bg-accent/30 rounded-lg border border-border hover:shadow-md transition-shadow">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={employee.profileImage} alt={employee.name} />
+                              <AvatarFallback className="bg-primary text-primary-foreground text-sm font-bold">
+                                {employee.avatar}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold text-foreground">{employee.name}</p>
+                              <p className="text-sm text-muted-foreground">{employee.id}</p>
+                              <p className="text-sm font-medium">{employee.position}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Calendar className="h-3 w-3 text-muted-foreground" />
+                                <p className="text-xs text-muted-foreground">
+                                  DoJ: {new Date(employee.dateOfJoining).toLocaleDateString()}
+                                </p>
+                                <Badge 
+                                  variant={employee.status === 'Active' ? 'default' : 'secondary'}
+                                  className="ml-2 text-xs"
+                                >
+                                  {employee.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => navigate(`/employees/${employee.id}`)}
+                              className="w-20"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => navigate(`/employees/${employee.id}/edit`)}
+                              className="w-20"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
