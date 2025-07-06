@@ -27,13 +27,13 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
             
-            <Route path="/" element={
+            <Route element={
               <AuthGuard>
                 <MainLayout />
               </AuthGuard>
             }>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="employees" element={<EmployeeManagement />} />
               <Route path="attendance" element={<AttendanceManagement />} />
