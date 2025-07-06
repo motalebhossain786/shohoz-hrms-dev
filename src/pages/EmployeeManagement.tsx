@@ -133,10 +133,10 @@ const EmployeeManagement = () => {
         employee.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
         employee.company.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesDepartment = departmentFilter === '' || employee.department === departmentFilter;
-      const matchesCompany = companyFilter === '' || employee.company === companyFilter;
-      const matchesEmploymentType = employmentTypeFilter === '' || employee.employmentType === employmentTypeFilter;
-      const matchesStatus = statusFilter === '' || employee.status === statusFilter;
+      const matchesDepartment = departmentFilter === '' || departmentFilter === 'all' || employee.department === departmentFilter;
+      const matchesCompany = companyFilter === '' || companyFilter === 'all' || employee.company === companyFilter;
+      const matchesEmploymentType = employmentTypeFilter === '' || employmentTypeFilter === 'all' || employee.employmentType === employmentTypeFilter;
+      const matchesStatus = statusFilter === '' || statusFilter === 'all' || employee.status === statusFilter;
 
       return matchesSearch && matchesDepartment && matchesCompany && matchesEmploymentType && matchesStatus;
     });
@@ -148,10 +148,10 @@ const EmployeeManagement = () => {
 
   const clearFilters = () => {
     setSearchTerm('');
-    setDepartmentFilter('');
-    setCompanyFilter('');
-    setEmploymentTypeFilter('');
-    setStatusFilter('');
+    setDepartmentFilter('all');
+    setCompanyFilter('all');
+    setEmploymentTypeFilter('all');
+    setStatusFilter('all');
   };
 
   return (
@@ -239,7 +239,7 @@ const EmployeeManagement = () => {
                 <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Departments</SelectItem>
+                <SelectItem value="all">All Departments</SelectItem>
                 {departments.map(dept => (
                   <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                 ))}
@@ -251,7 +251,7 @@ const EmployeeManagement = () => {
                 <SelectValue placeholder="Company" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Companies</SelectItem>
+                <SelectItem value="all">All Companies</SelectItem>
                 {companies.map(company => (
                   <SelectItem key={company} value={company}>{company}</SelectItem>
                 ))}
@@ -263,7 +263,7 @@ const EmployeeManagement = () => {
                 <SelectValue placeholder="Employment Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {employmentTypes.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -275,7 +275,7 @@ const EmployeeManagement = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 {statuses.map(status => (
                   <SelectItem key={status} value={status}>{status}</SelectItem>
                 ))}
