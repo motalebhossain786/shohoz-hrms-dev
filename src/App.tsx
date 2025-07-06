@@ -17,6 +17,7 @@ import AttendanceManagement from "@/pages/AttendanceManagement";
 import ModulePlaceholder from "@/pages/ModulePlaceholder";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
+import Organogram from "./pages/Organogram";
 
 const queryClient = new QueryClient();
 
@@ -45,20 +46,7 @@ const App = () => (
               <Route path="attendance" element={<AttendanceManagement />} />
               
               {/* Module Placeholders */}
-              <Route path="organogram" element={
-                <ModulePlaceholder 
-                  title="Organogram" 
-                  description="Visualize organizational structure and hierarchy"
-                  icon={GitBranch}
-                  features={[
-                    "Interactive organization chart",
-                    "Department hierarchy visualization",
-                    "Role and reporting relationships",
-                    "Team structure overview",
-                    "Export organizational charts"
-                  ]}
-                />
-              } />
+              <Route path="organogram" element={<Organogram />} />
               
               <Route path="leave" element={
                 <ModulePlaceholder 
