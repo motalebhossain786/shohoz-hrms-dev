@@ -10,6 +10,7 @@ import Register from "@/components/auth/Register";
 import MainLayout from "@/components/layout/MainLayout";
 import Dashboard from "@/pages/Dashboard";
 import EmployeeManagement from "@/pages/EmployeeManagement";
+import AddEmployee from "@/pages/AddEmployee";
 import AttendanceManagement from "@/pages/AttendanceManagement";
 import ModulePlaceholder from "@/pages/ModulePlaceholder";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
@@ -33,9 +34,10 @@ const App = () => (
                 <MainLayout />
               </AuthGuard>
             }>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="employees" element={<EmployeeManagement />} />
+              <Route path="employees/add" element={<AddEmployee />} />
               <Route path="attendance" element={<AttendanceManagement />} />
               
               {/* Module Placeholders */}

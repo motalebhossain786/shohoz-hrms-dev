@@ -24,7 +24,10 @@ const EmployeeManagement = () => {
           </h1>
           <p className="text-muted-foreground mt-2">Manage employee records, profiles, and information</p>
         </div>
-        <Button className="hrms-button-primary">
+        <Button 
+          className="hrms-button-primary"
+          onClick={() => window.location.href = '/employees/add'}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Employee
         </Button>
