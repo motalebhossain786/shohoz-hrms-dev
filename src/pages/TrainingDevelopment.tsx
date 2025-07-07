@@ -263,8 +263,8 @@ const TrainingDevelopment = () => {
 
   const filteredTrainingSessions = trainingSessions.filter(session => {
     return (
-      (filters.department === '' || session.department === filters.department) &&
-      (filters.status === '' || session.status === filters.status) &&
+      (filters.department === '' || filters.department === 'all' || session.department === filters.department) &&
+      (filters.status === '' || filters.status === 'all' || session.status === filters.status) &&
       (filters.search === '' || 
         session.title.toLowerCase().includes(filters.search.toLowerCase()) ||
         session.trainer.toLowerCase().includes(filters.search.toLowerCase())
@@ -367,7 +367,7 @@ const TrainingDevelopment = () => {
                   <SelectValue placeholder="Department" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Departments</SelectItem>
+                  <SelectItem value="all">All Departments</SelectItem>
                   {mockDepartments.map(dept => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
@@ -378,7 +378,7 @@ const TrainingDevelopment = () => {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Status</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value="Planned">Planned</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>
