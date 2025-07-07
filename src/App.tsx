@@ -19,6 +19,7 @@ import LeaveManagement from "@/pages/LeaveManagement";
 import PayrollManagement from "@/pages/PayrollManagement";
 import PerformanceManagement from "@/pages/PerformanceManagement";
 import TrainingDevelopment from "@/pages/TrainingDevelopment";
+import EmployeeExitManagement from "@/pages/EmployeeExitManagement";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
@@ -63,20 +64,7 @@ const App = () => (
               
               <Route path="recruitment" element={<TalentAcquisition />} />
               
-              <Route path="exit" element={
-                <ModulePlaceholder 
-                  title="Employee Exit Management" 
-                  description="Manage employee offboarding and exit processes"
-                  icon={UserMinus}
-                  features={[
-                    "Exit interview scheduling",
-                    "Asset return tracking",
-                    "Final settlement calculations",
-                    "Knowledge transfer documentation",
-                    "Exit analytics and insights"
-                  ]}
-                />
-              } />
+              <Route path="exit" element={<EmployeeExitManagement />} />
               
               <Route path="handbook" element={
                 <ModulePlaceholder 
