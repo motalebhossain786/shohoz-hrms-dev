@@ -26,6 +26,7 @@ import Organogram from "./pages/Organogram";
 import TalentAcquisition from "./pages/TalentAcquisition";
 import EmployeeHandbook from "./pages/EmployeeHandbook";
 import HRLettersTemplate from "./pages/HRLettersTemplate";
+import OfficialTickets from "./pages/OfficialTickets";
 
 const queryClient = new QueryClient();
 
@@ -72,20 +73,7 @@ const App = () => (
               
               <Route path="templates" element={<HRLettersTemplate />} />
               
-              <Route path="tickets" element={
-                <ModulePlaceholder 
-                  title="Official Tickets" 
-                  description="Employee request and support ticket system"
-                  icon={HelpCircle}
-                  features={[
-                    "Ticket creation and tracking",
-                    "Priority and category management",
-                    "Assignment and escalation rules",
-                    "Communication and updates",
-                    "Resolution analytics"
-                  ]}
-                />
-              } />
+              <Route path="tickets" element={<OfficialTickets />} />
               
               <Route path="claims" element={
                 <ModulePlaceholder 
