@@ -17,6 +17,7 @@ import AttendanceManagement from "@/pages/AttendanceManagement";
 import ModulePlaceholder from "@/pages/ModulePlaceholder";
 import LeaveManagement from "@/pages/LeaveManagement";
 import PayrollManagement from "@/pages/PayrollManagement";
+import PerformanceManagement from "@/pages/PerformanceManagement";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
@@ -54,20 +55,7 @@ const App = () => (
               
               <Route path="payroll" element={<PayrollManagement />} />
               
-              <Route path="performance" element={
-                <ModulePlaceholder 
-                  title="Performance Management" 
-                  description="Employee performance tracking and evaluation"
-                  icon={TrendingUp}
-                  features={[
-                    "Performance review cycles",
-                    "Goal setting and tracking",
-                    "360-degree feedback",
-                    "Performance analytics and reporting",
-                    "Development planning"
-                  ]}
-                />
-              } />
+              <Route path="performance" element={<PerformanceManagement />} />
               
               <Route path="training" element={
                 <ModulePlaceholder 
