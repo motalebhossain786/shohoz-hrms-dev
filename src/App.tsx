@@ -22,6 +22,7 @@ import TrainingDevelopment from "@/pages/TrainingDevelopment";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
+import TalentAcquisition from "./pages/TalentAcquisition";
 
 const queryClient = new QueryClient();
 
@@ -60,20 +61,7 @@ const App = () => (
               
               <Route path="training" element={<TrainingDevelopment />} />
               
-              <Route path="recruitment" element={
-                <ModulePlaceholder 
-                  title="Talent Acquisition" 
-                  description="Recruitment and onboarding processes"
-                  icon={UserPlus}
-                  features={[
-                    "Job posting and application management",
-                    "Candidate screening and evaluation",
-                    "Interview scheduling and feedback",
-                    "Onboarding workflow automation",
-                    "Recruitment analytics and reporting"
-                  ]}
-                />
-              } />
+              <Route path="recruitment" element={<TalentAcquisition />} />
               
               <Route path="exit" element={
                 <ModulePlaceholder 
