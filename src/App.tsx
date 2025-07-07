@@ -24,6 +24,7 @@ import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMi
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
 import TalentAcquisition from "./pages/TalentAcquisition";
+import EmployeeHandbook from "./pages/EmployeeHandbook";
 
 const queryClient = new QueryClient();
 
@@ -66,20 +67,7 @@ const App = () => (
               
               <Route path="exit" element={<EmployeeExitManagement />} />
               
-              <Route path="handbook" element={
-                <ModulePlaceholder 
-                  title="Employee Handbook" 
-                  description="Centralized knowledge base and policies"
-                  icon={FileText}
-                  features={[
-                    "Policy and procedure documentation",
-                    "Employee guidelines and FAQs",
-                    "Searchable knowledge base",
-                    "Version control and updates",
-                    "Acknowledgment tracking"
-                  ]}
-                />
-              } />
+              <Route path="handbook" element={<EmployeeHandbook />} />
               
               <Route path="templates" element={
                 <ModulePlaceholder 
