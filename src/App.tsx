@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
 import TalentAcquisition from "./pages/TalentAcquisition";
 import EmployeeHandbook from "./pages/EmployeeHandbook";
+import HRLettersTemplate from "./pages/HRLettersTemplate";
 
 const queryClient = new QueryClient();
 
@@ -69,20 +70,7 @@ const App = () => (
               
               <Route path="handbook" element={<EmployeeHandbook />} />
               
-              <Route path="templates" element={
-                <ModulePlaceholder 
-                  title="HR Letters Template" 
-                  description="Standardized HR document templates"
-                  icon={FileText}
-                  features={[
-                    "Letter template library",
-                    "Automated document generation",
-                    "Digital signature integration",
-                    "Template customization",
-                    "Document version control"
-                  ]}
-                />
-              } />
+              <Route path="templates" element={<HRLettersTemplate />} />
               
               <Route path="tickets" element={
                 <ModulePlaceholder 
