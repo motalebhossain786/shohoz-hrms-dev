@@ -27,6 +27,7 @@ import TalentAcquisition from "./pages/TalentAcquisition";
 import EmployeeHandbook from "./pages/EmployeeHandbook";
 import HRLettersTemplate from "./pages/HRLettersTemplate";
 import OfficialTickets from "./pages/OfficialTickets";
+import TADAClaims from "./pages/TADAClaims";
 
 const queryClient = new QueryClient();
 
@@ -75,20 +76,7 @@ const App = () => (
               
               <Route path="tickets" element={<OfficialTickets />} />
               
-              <Route path="claims" element={
-                <ModulePlaceholder 
-                  title="TA/DA Claims" 
-                  description="Travel and daily allowance claim management"
-                  icon={Receipt}
-                  features={[
-                    "Expense claim submission",
-                    "Receipt upload and verification",
-                    "Approval workflow automation",
-                    "Reimbursement processing",
-                    "Expense analytics and reporting"
-                  ]}
-                />
-              } />
+              <Route path="claims" element={<TADAClaims />} />
             </Route>
             
             {/* Catch-all route */}
