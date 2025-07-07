@@ -18,6 +18,7 @@ import ModulePlaceholder from "@/pages/ModulePlaceholder";
 import LeaveManagement from "@/pages/LeaveManagement";
 import PayrollManagement from "@/pages/PayrollManagement";
 import PerformanceManagement from "@/pages/PerformanceManagement";
+import TrainingDevelopment from "@/pages/TrainingDevelopment";
 import { GitBranch, Calendar, DollarSign, TrendingUp, BookOpen, UserPlus, UserMinus, FileText, HelpCircle, Receipt } from "lucide-react";
 import NotFound from "./pages/NotFound";
 import Organogram from "./pages/Organogram";
@@ -57,20 +58,7 @@ const App = () => (
               
               <Route path="performance" element={<PerformanceManagement />} />
               
-              <Route path="training" element={
-                <ModulePlaceholder 
-                  title="Training & Development" 
-                  description="Employee learning and development programs"
-                  icon={BookOpen}
-                  features={[
-                    "Training program management",
-                    "Course catalog and enrollment",
-                    "Learning progress tracking",
-                    "Certification management",
-                    "Training effectiveness analytics"
-                  ]}
-                />
-              } />
+              <Route path="training" element={<TrainingDevelopment />} />
               
               <Route path="recruitment" element={
                 <ModulePlaceholder 
