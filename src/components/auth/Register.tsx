@@ -8,14 +8,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
+const departments = [
+  'Human Resources',
+  'Engineering',
+  'Marketing',
+  'Sales',
+  'Finance',
+  'Operations',
+  'Customer Support',
+  'Product',
+  'Legal',
+  'Administration'
+];
+
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'employee' as UserRole
+    role: 'Employee' as UserRole,
+    department: ''
   });
   const { register, isLoading } = useAuth();
   const { toast } = useToast();
@@ -28,7 +41,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password || !formData.department) {
       toast({
         title: "Validation Error",
         description: "Please fill in all fields",
@@ -46,24 +59,24 @@ const Register = () => {
       return;
     }
 
-    const { error } = await register(
-      formData.firstName,
-      formData.lastName,
+    const success = await register(
+      formData.name,
       formData.email,
       formData.password,
-      formData.role
+      formData.role,
+      formData.department
     );
     
-    if (!error) {
+    if (success) {
       toast({
         title: "Registration Successful",
-        description: "Please check your email to confirm your account"
+        description: "Welcome to Shohoz HRMS"
       });
-      navigate('/login');
+      navigate('/dashboard');
     } else {
       toast({
         title: "Registration Failed",
-        description: error,
+        description: "Please try again",
         variant: "destructive"
       });
     }
@@ -84,23 +97,12 @@ const Register = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
-                id="firstName"
-                placeholder="John"
-                value={formData.firstName}
-                onChange={(e) => handleChange('firstName', e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChange={(e) => handleChange('lastName', e.target.value)}
+                id="name"
+                placeholder="John Doe"
+                value={formData.name}
+                onChange={(e) => handleChange('name', e.target.value)}
                 required
               />
             </div>
@@ -151,13 +153,29 @@ const Register = () => {
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="employee">Employee</SelectItem>
-                  <SelectItem value="department_head">Department Head</SelectItem>
-                  <SelectItem value="hr_manager">HR Manager</SelectItem>
+                  <SelectItem value="Employee">Employee</SelectItem>
+                  <SelectItem value="Department Head">Department Head</SelectItem>
+                  <SelectItem value="HR Manager">HR Manager</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="department">Department</Label>
+              <Select 
+                value={formData.department} 
+                onValueChange={(value) => handleChange('department', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map(dept => (
+                    <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             <Button 
               type="submit" 
