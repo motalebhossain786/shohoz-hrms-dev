@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Clock, Calendar, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Plus, Download, MapPin, Filter } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, XCircle, AlertCircle, Edit, Trash2, Plus, Download, MapPin, Filter, LogIn, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const AttendanceManagement = () => {
@@ -24,6 +24,14 @@ const AttendanceManagement = () => {
   const [editingOutOfOffice, setEditingOutOfOffice] = useState(null);
   const [creatingRoster, setCreatingRoster] = useState(false);
   const [editingRoster, setEditingRoster] = useState(null);
+  
+  // Remote attendance tracking state
+  const [remoteAttendance, setRemoteAttendance] = useState({
+    inTime: null,
+    outTime: null,
+    isCheckedIn: false,
+    todayDate: new Date().toLocaleDateString()
+  });
   const [attendanceRecords, setAttendanceRecords] = useState([
     { 
       id: 1, 
@@ -654,6 +662,54 @@ const AttendanceManagement = () => {
 
   const stats = calculateStats();
 
+  // Remote attendance functions
+  const handleInTime = () => {
+    const currentTime = new Date().toLocaleTimeString('en-US', { 
+      hour12: true, 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    setRemoteAttendance(prev => ({
+      ...prev,
+      inTime: currentTime,
+      isCheckedIn: true
+    }));
+    
+    toast({
+      title: "In Time Recorded",
+      description: `Work started at ${currentTime}`,
+    });
+  };
+
+  const handleOutTime = () => {
+    if (!remoteAttendance.isCheckedIn) {
+      toast({
+        title: "Error",
+        description: "Please record In Time first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const currentTime = new Date().toLocaleTimeString('en-US', { 
+      hour12: true, 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+    
+    setRemoteAttendance(prev => ({
+      ...prev,
+      outTime: currentTime,
+      isCheckedIn: false
+    }));
+    
+    toast({
+      title: "Out Time Recorded",
+      description: `Work ended at ${currentTime}`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -691,6 +747,78 @@ const AttendanceManagement = () => {
           </Button>
         </div>
       </div>
+
+      {/* Remote Attendance Section */}
+      <Card className="dashboard-card border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Clock className="h-5 w-5 text-primary" />
+            Work From Home - Time Tracking
+          </CardTitle>
+          <CardDescription>
+            Record your In Time and Out Time for remote work - {remoteAttendance.todayDate}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-6">
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground mb-1">In Time</div>
+                  <div className="text-lg font-semibold text-foreground">
+                    {remoteAttendance.inTime || '--:--'}
+                  </div>
+                </div>
+                <Button 
+                  onClick={handleInTime}
+                  disabled={remoteAttendance.isCheckedIn}
+                  className="flex items-center gap-2"
+                  variant={remoteAttendance.isCheckedIn ? "outline" : "default"}
+                >
+                  <LogIn className="h-4 w-4" />
+                  {remoteAttendance.isCheckedIn ? "Checked In" : "In Time"}
+                </Button>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground mb-1">Out Time</div>
+                  <div className="text-lg font-semibold text-foreground">
+                    {remoteAttendance.outTime || '--:--'}
+                  </div>
+                </div>
+                <Button 
+                  onClick={handleOutTime}
+                  disabled={!remoteAttendance.isCheckedIn}
+                  className="flex items-center gap-2"
+                  variant={!remoteAttendance.isCheckedIn ? "outline" : "default"}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Out Time
+                </Button>
+              </div>
+            </div>
+            
+            {/* Status Indicator */}
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${remoteAttendance.isCheckedIn ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
+              <span className="text-sm font-medium">
+                {remoteAttendance.isCheckedIn ? 'Working' : 'Not Working'}
+              </span>
+            </div>
+          </div>
+          
+          {/* Working Hours Display */}
+          {remoteAttendance.inTime && remoteAttendance.outTime && (
+            <div className="mt-4 p-3 bg-secondary/20 rounded-lg">
+              <div className="text-sm text-muted-foreground">Today's Working Hours</div>
+              <div className="text-lg font-semibold text-primary">
+                {remoteAttendance.inTime} - {remoteAttendance.outTime}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Filters */}
       <Card className="dashboard-card">
