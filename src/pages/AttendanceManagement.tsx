@@ -750,69 +750,66 @@ const AttendanceManagement = () => {
 
       {/* Remote Attendance Section */}
       <Card className="dashboard-card border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Clock className="h-5 w-5 text-primary" />
-            Work From Home - Time Tracking
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Clock className="h-4 w-4 text-primary" />
+            Work From Home
           </CardTitle>
-          <CardDescription>
-            Record your In Time and Out Time for remote work - {remoteAttendance.todayDate}
-          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-6">
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">In Time</div>
-                  <div className="text-lg font-semibold text-foreground">
+        <CardContent className="pt-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="text-center min-w-[60px]">
+                  <div className="text-xs text-muted-foreground">In Time</div>
+                  <div className="text-sm font-semibold">
                     {remoteAttendance.inTime || '--:--'}
                   </div>
                 </div>
                 <Button 
                   onClick={handleInTime}
                   disabled={remoteAttendance.isCheckedIn}
-                  className="flex items-center gap-2"
+                  size="sm"
+                  className="h-8 px-3"
                   variant={remoteAttendance.isCheckedIn ? "outline" : "default"}
                 >
-                  <LogIn className="h-4 w-4" />
-                  {remoteAttendance.isCheckedIn ? "Checked In" : "In Time"}
+                  <LogIn className="h-3 w-3 mr-1" />
+                  In
                 </Button>
               </div>
               
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">Out Time</div>
-                  <div className="text-lg font-semibold text-foreground">
+              <div className="flex items-center gap-3">
+                <div className="text-center min-w-[60px]">
+                  <div className="text-xs text-muted-foreground">Out Time</div>
+                  <div className="text-sm font-semibold">
                     {remoteAttendance.outTime || '--:--'}
                   </div>
                 </div>
                 <Button 
                   onClick={handleOutTime}
                   disabled={!remoteAttendance.isCheckedIn}
-                  className="flex items-center gap-2"
-                  variant={!remoteAttendance.isCheckedIn ? "outline" : "default"}
+                  size="sm"
+                  className="h-8 px-3"
+                  variant={!remoteAttendance.isCheckedIn ? "outline" : "destructive"}
                 >
-                  <LogOut className="h-4 w-4" />
-                  Out Time
+                  <LogOut className="h-3 w-3 mr-1" />
+                  Out
                 </Button>
               </div>
             </div>
             
-            {/* Status Indicator */}
             <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${remoteAttendance.isCheckedIn ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`}></div>
-              <span className="text-sm font-medium">
-                {remoteAttendance.isCheckedIn ? 'Working' : 'Not Working'}
+              <div className={`w-2 h-2 rounded-full ${remoteAttendance.isCheckedIn ? 'bg-success animate-pulse' : 'bg-muted-foreground'}`}></div>
+              <span className="text-xs font-medium">
+                {remoteAttendance.isCheckedIn ? 'Active' : 'Inactive'}
               </span>
             </div>
           </div>
           
-          {/* Working Hours Display */}
           {remoteAttendance.inTime && remoteAttendance.outTime && (
-            <div className="mt-4 p-3 bg-secondary/20 rounded-lg">
-              <div className="text-sm text-muted-foreground">Today's Working Hours</div>
-              <div className="text-lg font-semibold text-primary">
+            <div className="mt-3 p-2 bg-muted/50 rounded text-center">
+              <div className="text-xs text-muted-foreground">Working Hours</div>
+              <div className="text-sm font-medium text-primary">
                 {remoteAttendance.inTime} - {remoteAttendance.outTime}
               </div>
             </div>
